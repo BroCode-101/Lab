@@ -1,0 +1,38 @@
+const nodemailer = require("nodemailer");
+const path = require("path");
+
+// 1. Create transporter
+let transporter = nodemailer.createTransport({
+  service: "gmail", // or use SMTP settings
+  auth: {
+    user: "your-email@gmail.com",
+    pass: "your-app-password" // Use App Password, not your real Gmail password
+  }
+});
+
+// 2. Mail options
+let mailOptions = {
+  from: '"Your Name" <your-email@gmail.com>',
+  to: "receiver-email@example.com",
+  subject: "Hello with Inline Image",
+  html: `
+    <h2>Hello, this is a test email with inline image</h2>
+    <p>Below is the image:</p>
+    <img src="cid:unique@image" width="300" />
+  `,
+  attachments: [
+    {
+      filename: "example.jpg",
+      path: path.join(__dirname, "example.jpg"),
+      cid: "unique@image" // same as in html img src
+    }
+  ]
+};
+
+// 3. Send mail
+transporter.sendMail(mailOptions, (error, info) => {
+  if (error) {
+    return console.log("Error: ", error);
+  }
+  console.log("Email sent: ", info.response);
+});
